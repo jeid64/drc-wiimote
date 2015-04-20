@@ -62,7 +62,7 @@ MCU = atmega328p
 #         F_CPU = 16000000
 #         F_CPU = 18432000
 #         F_CPU = 20000000
-F_CPU = 8000000
+F_CPU = 16000000
 
 
 # Output format. (can be srec, ihex, binary)
@@ -285,16 +285,16 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB) $(EXTRA_LIBS)
 # Type: avrdude -c ?
 # to get a full listing.
 #
-AVRDUDE_PROGRAMMER = stk500v1
-AVRDUDE_CONFIG = "D:\Arquivos de Programas\arduino-0022\hardware\tools\avr\etc\avrdude.conf"
+AVRDUDE_PROGRAMMER = arduino
+AVRDUDE_CONFIG = "/usr/local/CrossPack-AVR/etc/avrdude.conf"
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = COM6    # programmer connected to serial device
-AVRDUDE_BAUD = 19200   # serial device baud rate
+AVRDUDE_PORT = /dev/cu.usbmodem1421    # programmer connected to serial device
+AVRDUDE_BAUD = 115200   # serial device baud rate
 
 # Fuses config
 AVRDUDE_HFUSE = 0xde
-AVRDUDE_LFUSE = 0xe2
+AVRDUDE_LFUSE = 0xFF
 AVRDUDE_EFUSE = 0x05
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
@@ -315,7 +315,8 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 # to submit bug reports.
 #AVRDUDE_VERBOSE = -v -v
 
-AVRDUDE_FLAGS = -C $(AVRDUDE_CONFIG) -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -b $(AVRDUDE_BAUD)
+#AVRDUDE_FLAGS = -C $(AVRDUDE_CONFIG) -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -b $(AVRDUDE_BAUD)
+AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -b $(AVRDUDE_BAUD)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
