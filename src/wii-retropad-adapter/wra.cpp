@@ -593,38 +593,28 @@ void setup() {
 	WMExtension::init();
 }
 
+void fake_loop() {
+	for (;;) {
+		ba = 1;
+		WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
+				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
+		delay(1000);
+		ba = 0;
+		WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
+				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
+		delay(1000);
+		bb = 1;
+		WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
+				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
+		delay(1000);
+		bb = 0;
+		WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
+				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
+		delay(1000);
+	}
+}
+
 void loop() {
 	// Select pad loop based on pad auto-detection routine. Genesis pad is the default.
-	switch (detectPad()) {
-	case PAD_NES:
-		nes_loop();
-		break;
-	case PAD_SNES:
-		snes_loop();
-		break;
-	case PAD_PS2:
-		ps2_loop();
-		break;
-	case PAD_GC:
-		gc_loop();
-		break;
-	case PAD_N64:
-		n64_loop();
-		break;
-	case PAD_NEOGEO:
-		neogeo_loop();
-		break;
-	case PAD_SATURN:
-		saturn_loop();
-		break;
-	case PAD_TG16:
-		tg16_loop();
-		break;
-	case PAD_WIICC:
-		unsupported_pad();
-		break;
-	default:
-		genesis_loop();
-		break;
-	}
+	fake_loop();
 }
