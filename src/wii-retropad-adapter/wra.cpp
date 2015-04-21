@@ -17,6 +17,7 @@
  */
 
 #include <WProgram.h>
+#include <HardwareSerial.h>
 
 #include "WMExtension.h"
 #include "PS2Pad.h"
@@ -590,27 +591,25 @@ void unsupported_pad(void) {
 
 void setup() {
 	// Prepare wiimote communications
+  Serial.begin(9600);           // start serial for output
 	WMExtension::init();
 }
 
 void fake_loop() {
+	int incomingByte = 0;
 	for (;;) {
-		ba = 1;
-		WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
-				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
-		delay(1000);
-		ba = 0;
-		WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
-				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
-		delay(1000);
-		bb = 1;
-		WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
-				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
-		delay(1000);
-		bb = 0;
-		WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
-				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
-		delay(1000);
+		if (Serial.available() > 0) {
+			// read the incoming byte:
+			incomingByte = Serial.read();
+			Serial.write(incomingByte);
+			ba = incomingByte;
+			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
+					bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
+			delay(100);
+			ba = 0;
+			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
+					bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
+		}
 	}
 }
 
