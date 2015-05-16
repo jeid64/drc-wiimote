@@ -602,11 +602,46 @@ void fake_loop() {
 			// read the incoming byte:
 			incomingByte = Serial.read();
 			Serial.write(incomingByte);
-			ba = incomingByte;
+			switch (incomingByte)
+			{
+				case ',':
+					ba = 1;
+					break;
+				case '.':
+					bb = 1;
+					break;
+				case 'w':
+					bdu = 1;
+					bdr = bdl = bdd = 0;
+					break;
+				case 'a':
+					bdl = 1;
+					bdr = bdu = bdd = 0;
+					break;
+				case 's':
+					bdd = 1;
+					bdr = bdu = bdl = 0;
+					break;
+				case 'd':
+					bdr = 1;
+					bdl = bdu = bdd = 0;
+					break;
+				case 'q':
+					bzl = !bzl;
+					break;
+				case 'e':
+					bzr = 1;
+					break;
+				case ' ':
+					bzl = bzr = ba = bb = bdu = bdr = 0;
+					break;
+			}
+			//ba = incomingByte;
 			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
 					bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
-			delay(100);
-			ba = 0;
+			delay(25);
+			//bzr = 1;
+			//ba = 0;
 			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
 					bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
 		}
