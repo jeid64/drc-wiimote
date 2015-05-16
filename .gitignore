@@ -1,0 +1,16 @@
+*.o
+*.cof
+*.hex
+*.obj
+*.elf
+*.o
+*.bin
+*.lst
+*.map
+*.srec
+*.DS_STORE
+*.dep
+*.eep
+*.lss
+*.sym
+*.a
