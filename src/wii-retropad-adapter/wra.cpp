@@ -137,8 +137,12 @@ int detectPad() {
 
 void setup() {
 	// Prepare wiimote communications
-  Serial.begin(9600);           // start serial for output
+	Serial.begin(9600);
 	WMExtension::init();
+}
+
+void controller_state_to_button_state(ControllerState cs) {
+	ba = cs.ba;
 }
 
 void fake_loop() {
@@ -147,12 +151,12 @@ void fake_loop() {
 	Stream* serialStream = &Serial;
 	pb_istream_from_stream(*serialStream, pbInStream);
 	ControllerState cs;
-	cs.controller_id = 1;
-	cs.bdl=2;
 	for (;;) {
 		if (serialStream->available() >= ControllerState_size &&
 				pb_decode(&pbInStream, ControllerState_fields, &cs)) {
-			ba=1;
+			controller_state_to_button_state(cs);
+			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
+					bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
 		}
 		if (Serial.available() > 0) {
 			// read the incoming byte:
