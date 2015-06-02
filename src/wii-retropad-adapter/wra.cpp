@@ -21,7 +21,7 @@
 
 #include "WMExtension.h"
 
-#include "pb/pb_decode.h"
+#include "pb/pb_arduino_decode.h"
 #include "pb/controller_state.pb.h"
 
 // Classic Controller Buttons
@@ -143,16 +143,21 @@ void setup() {
 
 void fake_loop() {
 	int incomingByte = 0;
-	uint8_t buffer[32];
-	pb_istream_t istream = pb_istream_from_buffer(buffer, sizeof(buffer));
+	pb_istream_t pbInStream;
+	Stream* serialStream = &Serial;
+	pb_istream_from_stream(*serialStream, pbInStream);
 	ControllerState cs;
 	cs.controller_id = 1;
 	cs.bdl=2;
 	for (;;) {
+		if (serialStream->available() >= ControllerState_size &&
+				pb_decode(&pbInStream, ControllerState_fields, &cs)) {
+			ba=1;
+		}
 		if (Serial.available() > 0) {
 			// read the incoming byte:
-			incomingByte = Serial.read();
-			Serial.write(incomingByte);
+			//incomingByte = Serial.read();
+			//Serial.write(incomingByte);
 			switch (incomingByte)
 			{
 				case ',':

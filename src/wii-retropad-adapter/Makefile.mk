@@ -80,12 +80,12 @@ OBJDIR = .
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = Wire/utility/twi.c pb/pb_common.c pb/pb_decode.c pb/controller_state.pb.c
+SRC = Wire/utility/twi.c pb/pb_decode.c pb/controller_state.pb.c pb/pb_common.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC = main.cpp wra.cpp Wire/Wire.cpp \
-WMCrypt.cpp WMExtension.cpp 
+WMCrypt.cpp WMExtension.cpp pb/pb_arduino_decode.cpp 
 
 
 # List Assembler source files here.

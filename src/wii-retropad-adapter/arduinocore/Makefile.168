@@ -86,7 +86,7 @@ wiring_shift.c wiring.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)
-CPPSRC = HardwareSerial.cpp Print.cpp Tone.cpp WMath.cpp WString.cpp
+CPPSRC = HardwareSerial.cpp Print.cpp Tone.cpp WMath.cpp WString.cpp Stream.cpp
 
 
 # List Assembler source files here.
