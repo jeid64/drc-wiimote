@@ -21,6 +21,9 @@
 
 #include "WMExtension.h"
 
+#include "pb/pb_decode.h"
+#include "pb/controller_state.pb.h"
+
 // Classic Controller Buttons
 int bdl = 0; // D-Pad Left state
 int bdr = 0; // D-Pad Right state
@@ -140,6 +143,11 @@ void setup() {
 
 void fake_loop() {
 	int incomingByte = 0;
+	uint8_t buffer[32];
+	pb_istream_t istream = pb_istream_from_buffer(buffer, sizeof(buffer));
+	ControllerState cs;
+	cs.controller_id = 1;
+	cs.bdl=2;
 	for (;;) {
 		if (Serial.available() > 0) {
 			// read the incoming byte:

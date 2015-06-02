@@ -80,7 +80,7 @@ OBJDIR = .
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = Wire/utility/twi.c
+SRC = Wire/utility/twi.c pb/pb_common.c pb/pb_decode.c pb/controller_state.pb.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)

@@ -1,0 +1,4 @@
+~/Downloads/nanopb-0.3.3-macosx-x86/generator-bin/protoc -ocontroller_state.pb controller_state.proto 
+python ~/Downloads/nanopb-0.3.3-macosx-x86/generator/nanopb_generator.py controller_state.pb
+    Wrote to controller_state.pb.h and controller_state.pb.c
+

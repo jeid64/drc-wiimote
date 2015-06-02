@@ -1,0 +1,27 @@
+message ControllerState {
+    required int32 controller_id = 1;
+    // Classic Controller Buttons
+    required int32 bdl = 2; // D-Pad Left state
+    required int32 bdr = 3; // D-Pad Right state
+    required int32 bdu = 4; // D-Pad Up state
+    required int32 bdd = 5; // D-Pad Down state
+    required int32 ba = 6; // A button state
+    required int32 bb = 7; // B button state
+    required int32 bx = 8; // X button state
+    required int32 by = 9; // Y button state
+    required int32 bl = 10; // L button state
+    required int32 br = 11; // R button state
+    required int32 bm = 12; // MINUS button state
+    required int32 bp = 13; // PLUS button state
+    required int32 bhome = 14; // HOME button state
+    required int32 bzl = 15; // ZL button state
+    required int32 bzr = 16; // ZR button state
+    required int32 lt = 17; // L analog value
+    required int32 rt = 18; // R analog value
+
+    // Analog buttons.
+    required int32 lx = 19;
+    required int32 ly = 20;
+    required int32 rx = 21;
+    required int32 ry = 22;
+}
