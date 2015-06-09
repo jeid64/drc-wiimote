@@ -137,73 +137,56 @@ int detectPad() {
 
 void setup() {
 	// Prepare wiimote communications
-	Serial.begin(9600);
+	Serial.begin(115200);
+	Serial.println("Hello.");
 	WMExtension::init();
+}
+
+unsigned long readULongFromBytes() {
+  union u_tag {
+    byte b[4];
+    unsigned long ulval;
+  } u;
+  u.b[0] = Serial.read();
+  u.b[1] = Serial.read();
+  u.b[2] = Serial.read();
+  u.b[3] = Serial.read();
+  return u.ulval;
 }
 
 void controller_state_to_button_state(ControllerState cs) {
 	ba = cs.ba;
+	bb = cs.bb;
 }
 
 void fake_loop() {
-	int incomingByte = 0;
-	pb_istream_t pbInStream;
-	Stream* serialStream = &Serial;
-	pb_istream_from_stream(*serialStream, pbInStream);
-	ControllerState cs;
 	for (;;) {
-		if (serialStream->available() >= ControllerState_size &&
-				pb_decode(&pbInStream, ControllerState_fields, &cs)) {
+		if(Serial.available()) {
+			int packet_size = Serial.read();
+			uint8_t in_buffer[256];
+			int bytes_read = Serial.readBytes((char*)in_buffer, packet_size);
+			if (bytes_read != packet_size) {
+				Serial.println("Bytes mismatch.");
+				return;
+			}
+			pb_istream_t istream = pb_istream_from_buffer(in_buffer, bytes_read);
+			ControllerState cs;
+			if(!pb_decode(&istream, ControllerState_fields, &cs)) {
+				String dbg_msg = "Decode failure, read num of bytes: ";
+				String send_str = dbg_msg + bytes_read;
+				Serial.println(send_str);
+				return;
+			}
 			controller_state_to_button_state(cs);
 			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
 					bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
-		}
-		if (Serial.available() > 0) {
-			// read the incoming byte:
-			//incomingByte = Serial.read();
-			//Serial.write(incomingByte);
-			switch (incomingByte)
-			{
-				case ',':
-					ba = 1;
-					break;
-				case '.':
-					bb = 1;
-					break;
-				case 'w':
-					bdu = 1;
-					bdr = bdl = bdd = 0;
-					break;
-				case 'a':
-					bdl = 1;
-					bdr = bdu = bdd = 0;
-					break;
-				case 's':
-					bdd = 1;
-					bdr = bdu = bdl = 0;
-					break;
-				case 'd':
-					bdr = 1;
-					bdl = bdu = bdd = 0;
-					break;
-				case 'q':
-					bzl = !bzl;
-					break;
-				case 'e':
-					bzr = 1;
-					break;
-				case ' ':
-					bzl = bzr = ba = bb = bdu = bdr = 0;
-					break;
-			}
-			//ba = incomingByte;
-			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
-					bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
-			delay(25);
-			//bzr = 1;
-			//ba = 0;
-			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
-					bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
+			String dbg_msg = "ba ";
+			String send_str = dbg_msg + cs.ba;
+			String send_str1 = send_str + " bytes ";
+			String send_str2 = send_str1 + bytes_read;
+			String send_str3 = send_str2 + " cs.ba ";
+			String send_str4 = send_str3 + cs.ba;
+			Serial.println(send_str4);
 		}
 	}
 }

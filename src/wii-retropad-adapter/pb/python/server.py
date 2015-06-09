@@ -3,6 +3,8 @@ import sys
 import struct
 import controller_state_pb2
 
+import serial
+
 def send_message(sock, message):
     """ Send a serialized message (protobuf Message interface)
         to a socket, prepended by its length packed in 4
@@ -17,13 +19,12 @@ def get_message(sock, msgtype):
         of protobuf Message.
     """
     len_buf = socket_read_n(sock, 4)
-    print len_buf
     msg_len = struct.unpack('>L', len_buf)[0]
     msg_buf = socket_read_n(sock, msg_len)
 
     msg = msgtype()
     msg.ParseFromString(msg_buf)
-    return msg
+    return msg, msg_len
 
 def socket_read_n(sock, n):
     """ Read exactly n bytes from the socket.
@@ -38,6 +39,10 @@ def socket_read_n(sock, n):
         buf += data
         n -= len(data)
     return buf
+
+def packIntegerAsULong(value):
+        """Packs a python 4 byte unsigned integer to an arduino unsigned long"""
+        return struct.pack('I', value)    #should check bounds
 
 def main():
     HOST = ''   # Symbolic name, meaning all available interfaces
@@ -60,12 +65,25 @@ def main():
     s.listen(10)
     print 'Socket now listening'
 
+    #wait to accept a connection - blocking call
+    conn, addr = s.accept()
+    print 'Connected with ' + addr[0] + ':' + str(addr[1])
+    ser = serial.Serial('/dev/tty.usbmodem1421', 115200, timeout=0)
+    print ser.readline()
     #now keep talking with the client
     while 1:
-        #wait to accept a connection - blocking call
-        conn, addr = s.accept()
-        print 'Connected with ' + addr[0] + ':' + str(addr[1])
-        controller_state = get_message(conn, controller_state_pb2.ControllerState)
+        #print "Message recevied."
+        controller_state, msg_len = get_message(conn, controller_state_pb2.ControllerState)
+        #print msg_len
+        #print binascii.hexlify(packIntegerAsULong(msg_len))
+        #ser.write(packIntegerAsULong(msg_len))
+        #print (controller_state.ba)
+        binary_string = controller_state.SerializeToString()
+        ser.write('' + chr(len(binary_string)))
+        #print 'Writing %d bytes to serial.' % len(binary_string)
+        ser.write(binary_string)
+        print ser.readline()
+
 
     s.close()
 
