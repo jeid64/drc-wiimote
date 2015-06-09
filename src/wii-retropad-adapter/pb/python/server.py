@@ -74,15 +74,16 @@ def main():
     while 1:
         #print "Message recevied."
         controller_state, msg_len = get_message(conn, controller_state_pb2.ControllerState)
-        #print msg_len
-        #print binascii.hexlify(packIntegerAsULong(msg_len))
-        #ser.write(packIntegerAsULong(msg_len))
-        #print (controller_state.ba)
         binary_string = controller_state.SerializeToString()
         ser.write('' + chr(len(binary_string)))
-        #print 'Writing %d bytes to serial.' % len(binary_string)
         ser.write(binary_string)
-        print ser.readline()
+        msg = ser.readline()
+        if "failure" in msg:
+            print "resync" + msg
+            ser.flushOutput()
+            ser.write("A")
+        else:
+            print msg
 
 
     s.close()
