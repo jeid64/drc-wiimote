@@ -25,6 +25,9 @@ def send_message(message):
     packed_len = struct.pack('>L', len(s))
     sock.sendall(packed_len + s)
 
+def scale_stick(OldValue, OldMin, OldMax, NewMin, NewMax):
+    return int((((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin)
+
 def hid_snd():
     global joystick, hid_seq_id
     controller_state = controller_state_pb2.ControllerState()
@@ -115,10 +118,10 @@ def hid_snd():
 
     controller_state.lt = 0
     controller_state.rt = 0
-    controller_state.lx = 0
-    controller_state.ly = 0
-    controller_state.rx = 0
-    controller_state.ry = 0
+    #controller_state.lx = 0
+    #controller_state.ly = 0
+    #controller_state.rx = 0
+    #controller_state.ry = 0
     #button_bits |= hat_mapping_x[hat[0]]
     #button_bits |= hat_mapping_y[hat[1]]
     # xbox 360 axis.
@@ -137,19 +140,45 @@ def hid_snd():
     # 2: r stick l/r
     # 3: r stick u/d
     # 6: r trigger
+    # lx ly = 0-63, rx ry = 0-31
     # don't know what four is.
-    #for i in xrange(4):
-    #    if i in (5, 6):
-    #        if joystick.get_axis(i) > 0:
+    for i in xrange(4):
+        if i in (5, 6):
+            if joystick.get_axis(i) > 0:
+                print ("got trigger")
     #            button_bits |= trigger_mapping[i]
-    #    else:
-    #        orig = joystick.get_axis(i)
-    #        scaled = 0x800
-    #        if abs(orig) > 0.2:
-    #            if i in (0, 2):
-    #                scaled = scale_stick(orig, -1, 1, 900, 3200)
-    #            elif i in (1, 3):
-    #                scaled = scale_stick(orig, 1, -1, 900, 3200)
+        else:
+            orig = joystick.get_axis(i)
+            scaled = 0
+            #if abs(orig) > 0.2:
+            if i is 0:
+                scaled = scale_stick(orig, -1, 1, 0, 63)
+                controller_state.lx = scaled
+                print ("lx " + str(scaled))
+            if i is 1:
+                scaled = scale_stick(orig, 1, -1, 0, 63)
+                controller_state.ly = scaled
+                print ("ly " + str(scaled))
+            if i is 2:
+                scaled = scale_stick(orig, -1, 1, 0, 31)
+                controller_state.rx = scaled
+                print ("rx " + str(scaled))
+            if i is 3:
+                scaled = scale_stick(orig, 1, -1, 0, 31)
+                controller_state.ry = scaled
+                print ("ry " + str(scaled))
+            #else:
+            #    scaled = 0
+            #    if i is 0:
+            #        controller_state.lx = scaled
+            #    if i is 1:
+            #        controller_state.ly = scaled
+            #    if i is 2:
+            #        controller_state.rx = scaled
+            #    if i is 3:
+            #        controller_state.ry = scaled
+            #    print "deadzoned."
+
     #        #print '%04i %04i %f' % (i, scaled, orig)
     #        stick_mapping = { 0 : 0, 1 : 1, 2 : 2, 3 : 3 }
     #        report[3 + stick_mapping[i]] = scaled

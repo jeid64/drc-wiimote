@@ -178,6 +178,10 @@ void controller_state_to_button_state(ControllerState cs) {
 	bdd = cs.bdd;
 	bzl = cs.bzl;
 	bzr = cs.bzr;
+	lx = cs.lx;
+	ly = cs.ly;
+	rx = cs.rx;
+	ry = cs.ry;
 }
 
 void fake_loop() {
@@ -211,13 +215,13 @@ void fake_loop() {
 			controller_state_to_button_state(cs);
 			WMExtension::set_button_data(bdl, bdr, bdu, bdd, ba, bb, bx, by, bl, br,
 				bm, bp, bhome, lx, ly, rx, ry, bzl, bzr, lt, rt);
-			//String dbg_msg = "bdl ";
-			//String send_str = dbg_msg + bdl;
+			String dbg_msg = "ba ";
+			String send_str = dbg_msg + ba;
 			//String send_str1 = send_str + " bytes ";
 			//String send_str2 = send_str1 + bytes_read;
 			//String send_str3 = send_str2 + " cs.bdl ";
 			//String send_str4 = send_str3 + cs.bdl;
-			//Serial.println(send_str4);
+			Serial.println(send_str);
 		}
 	}
 }
